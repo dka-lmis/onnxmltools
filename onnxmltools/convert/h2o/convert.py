@@ -49,8 +49,9 @@ def convert(model, name=None, initial_types=None, doc_string='', target_opset=No
     '''
     if name is None:
         name = str(uuid4().hex)
-    if initial_types is None:
-        initial_types = [('input', FloatTensorType(shape=['None', 'None']))]
+    supported_algos = ['gbm']
+    # unsupported_alogs = ['coxph', 'dl', 'drf', 'gam', 'glm', 'glrm', 'isoforest', 'kmeans', 'pca', 'rulefit',
+    #                      'stackedensamble', 'svm', 'word2vec', 'xgboost']
 
     if isinstance(model, str):
         model_path = model
@@ -59,14 +60,24 @@ def convert(model, name=None, initial_types=None, doc_string='', target_opset=No
         f = open(model_path, "wb")
         f.write(model)
         f.close()
+
     mojo_str = h2o.print_mojo(model_path, format="json")
     mojo_model = json.loads(mojo_str)
-    if mojo_model["params"]["algo"] != "gbm":
+    model_algo = mojo_model["params"]["algo"]
+
+    if model_algo not in supported_algos:
+        print(f'''Model type not supported (algo={model_algo}).
+              Only {supported_algos} Mojo models are supported for now.''')
         raise ValueError(
-            "Model type not supported (algo=%s). Only GBM Mojo supported for now." % mojo_model["params"]["algo"])
+            f"Model type not supported (algo={model_algo}). Only {supported_algos} Mojo models are supported for now.")
+
+    if model_algo == "gbm":
+        if initial_types is None:
+            initial_types = [('input', FloatTensorType(shape=['None', 'None']))]
 
     target_opset = target_opset if target_opset else get_maximum_opset_supported()
     topology = parse_h2o(mojo_model, initial_types, target_opset, custom_conversion_functions, custom_shape_calculators)
     topology.compile()
     onnx_model = convert_topology(topology, name, doc_string, target_opset, targeted_onnx)
+
     return onnx_model
