@@ -49,41 +49,30 @@ class H2OTestConverterGBM(unittest.TestCase):
         return predictors, response, prostate
 
     @staticmethod
-    def _convert_mojo(model):
-        folder = os.environ.get('ONNXTESTDUMP', 'tests/temp')
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        mojo_path = model.download_mojo(path=folder)
+    def _convert_mojo(mojo_path):
         f = open(mojo_path, "rb")
         mojo_content = f.read()
         f.close()
         return convert_h2o(mojo_content, target_opset=TARGET_OPSET)
 
-    def test_h2o_regressor_unsupported_dists(self):
-        x, y, df = self._get_dataset(force_y_numeric=True)
-        not_supported_dists = ["poisson", "gamma", "tweedie"]
-        for d in not_supported_dists:
-            pros_gbm = H2OGradientBoostingEstimator(ntrees=7,
-                                                    max_depth=5,
-                                                    nfolds=5,
-                                                    keep_cross_validation_predictions=True,
-                                                    distribution=d,
-                                                    seed=1111, )
-            mojo_path = _make_mojo(pros_gbm, x, y, df)
-            with self.assertRaises(ValueError) as err:
-                _convert_mojo(mojo_path)
-            self.assertRegex(err.exception.args[0], "not supported")
+    def test_h2o_unsupported_algo(self):
+        gbm = H2ORandomForestEstimator(ntrees=7, max_depth=5)
+        mojo_path, test_data = _train_classifier(gbm, 2, is_str=True)
+        with self.assertRaises(ValueError) as err:
+            _convert_mojo(mojo_path)
+        self.assertRegex(err.exception.args[0], "not supported")
 
     def test_h2o_regressor(self):
-        x, y, df = self._get_dataset(force_y_numeric=True)
+        diabetes = load_diabetes()
+        train, test = _train_test_split_as_frames(diabetes.data, diabetes.target)
         dists = ["auto", "gaussian", "huber", "laplace", "quantile"]
         for d in dists:
             gbm = H2OGradientBoostingEstimator(ntrees=7, max_depth=5, distribution=d)
-            mojo_path = _make_mojo(gbm, x, y, df)
+            mojo_path = _make_mojo(gbm, train)
             onnx_model = _convert_mojo(mojo_path)
             self.assertIsNot(onnx_model, None)
             dump_data_and_model(
-                H2OMojoWrapper(mojo_path),
+                test, H2OMojoWrapper(mojo_path),
                 onnx_model, basename="H2OReg-Dec4")
 
     @unittest.skipIf(True, reason="Failure with latest version of h2o")

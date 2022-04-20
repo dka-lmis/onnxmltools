@@ -34,12 +34,17 @@ from h2o.estimators.targetencoder import H2OTargetEncoderEstimator
 from onnxmltools.convert import convert_h2o
 from onnxmltools.utils import dump_data_and_model
 
-
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())
 
 
-def _make_mojo(model, x: list, y: list, df: H2OFrame):
-    model.train(x=x, y=y, training_frame=df)
+def _make_mojo(model, train, y=-1, force_y_numeric=False):
+    if y < 0:
+        y = train.ncol + y
+    if force_y_numeric:
+        train[y] = train[y].asnumeric()
+    x = list(range(0, train.ncol))
+    x.remove(y)
+    model.train(x=x, y=y, training_frame=train)
     folder = os.environ.get('ONNXTESTDUMP', 'tests/temp')
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -114,7 +119,7 @@ def _train_classifier(model, n_classes, is_str=False, force_y_numeric=False):
         random_state=42, n_informative=7
     )
     train, test = _train_test_split_as_frames(x, y, is_str, is_classifier=True)
-    mojo_path = _make_mojo(model, train, force_y_numeric)
+    mojo_path = _make_mojo(model, train, force_y_numeric=force_y_numeric)
     return mojo_path, test
 
 
