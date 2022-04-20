@@ -155,17 +155,6 @@ class H2OMojoWrapper:
             ]
 
 
-class TestH2OGBMModels(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        h2o.init(port=54440)
-
-    @classmethod
-    def tearDownClass(cls):
-        h2o.cluster().shutdown()
-
-
 if __name__ == "__main__":
     # cl = TestH2OModels()
     # cl.setUpClass()
