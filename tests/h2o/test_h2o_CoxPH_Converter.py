@@ -40,8 +40,8 @@ class H2OTestConverterCoxPH(unittest.TestCase):
     def tearDownClass(cls):
         h2o.cluster().shutdown()
 
-    # @unittest.skip(reason='''H2O does not generate an empty file when downloading a CoxPH Model. The model generates
-    #                       a correct zip-file with the data of the model though.''')
+    # @unittest.skip(reason='''H2O generates an empty file when downloading a CoxPH Model. The model generates a
+    #                          correct zip-file with the data of the model though.''')
     def test_h2o_CoxPH_algo_support(self):
         x, y, train, test = _get_CoxPH_dataset()
         model = H2OCoxProportionalHazardsEstimator(start_column="start",
