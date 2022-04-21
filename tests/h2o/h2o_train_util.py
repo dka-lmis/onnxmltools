@@ -10,10 +10,7 @@ import h2o
 from onnx.defs import onnx_opset_version
 from onnxconverter_common.onnx_ex import DEFAULT_OPSET_NUMBER
 
-from h2o.estimators.anovaglm import H2OANOVAGLMEstimator
-from h2o.estimators.coxph import H2OCoxProportionalHazardsEstimator
 from h2o.estimators.deeplearning import H2ODeepLearningEstimator
-from h2o.estimators.deeplearning import H2OAutoEncoderEstimator
 from h2o.estimators.gbm import H2OGradientBoostingEstimator
 from h2o.estimators.random_forest import H2ORandomForestEstimator
 from h2o.estimators.xgboost import H2OXGBoostEstimator

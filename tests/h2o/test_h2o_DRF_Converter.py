@@ -44,8 +44,6 @@ class H2OTestConverterDRF(unittest.TestCase):
         x, y, train, test = _get_DRF_dataset()
         model = H2ORandomForestEstimator(ntrees=10, max_depth=5, min_rows=10, binomial_double_trees=True)
         mojo_path = _train_and_get_model_path(model, x, y, train, test)
-        print(mojo_path)
-        # print(h2o.print_mojo(mojo_path))
         with self.assertRaises(ValueError) as err:
             _convert_mojo(mojo_path)
         self.assertRegex(err.exception.args[0], "not supported")
@@ -59,7 +57,7 @@ class H2OTestConverterDRF(unittest.TestCase):
         self.assertIsNot(onnx_model, None)
         dump_data_and_model(
             test, H2OMojoWrapper(mojo_path),
-            onnx_model, basename="H2OReg-Dec4")
+            onnx_model, basename="H2O_DRF_test_conversion")
 
 
 if __name__ == "__main__":
