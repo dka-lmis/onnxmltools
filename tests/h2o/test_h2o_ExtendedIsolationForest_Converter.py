@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests H2O Distributed Random Forest (ExtendedIsoForest) converter
+Tests H2O Extended Isolation Forest (eif) converter
+https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/eif.html
 """
 import os
 import unittest

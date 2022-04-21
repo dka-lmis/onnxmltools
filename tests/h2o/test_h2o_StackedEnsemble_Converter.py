@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests Principal Component Analysis (StackedEnsemble) converter
+Tests H2O Stacked Ensembles (StackedEnsemble) converter
 https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/stacked-ensembles.html
 """
 import os

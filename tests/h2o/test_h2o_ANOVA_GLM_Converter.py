@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests Principal Component Analysis (AGLM) converter
-https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/AGLM.html
+Tests H2O ANOVA GLM (AGLM) converter
+https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/anova_glm.html
 """
 import os
 import unittest

@@ -1,19 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests H2O Distributed Random Forest (GLRM) converter
+Tests H2O Generalized Low Rank Models (GLRM) converter
+https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/glrm.html
 """
 import os
 import unittest
 
 from h2o import h2o
-from h2o.estimators import H2OGeneralizedLinearEstimator, H2OGeneralizedLowRankEstimator
-from h2o.exceptions import H2OError
+from h2o.estimators import H2OGeneralizedLowRankEstimator
 from onnx.defs import onnx_opset_version
 from onnxconverter_common import DEFAULT_OPSET_NUMBER
 
 from onnxmltools.utils import dump_data_and_model
-
 from tests.h2o.h2o_train_util import _convert_mojo, H2OMojoWrapper, _test_for_H2O_error
 
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())

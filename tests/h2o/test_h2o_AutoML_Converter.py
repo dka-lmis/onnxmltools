@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests Principal Component Analysis (autoML) converter
-https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/autoML.html
+Tests H2O Automatic Machine Learning (AutoML) converter
+https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html
 """
 import os
 import unittest

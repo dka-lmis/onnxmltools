@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Tests h2o's tree-based methods' converters.
+Helper function for H2O Models and algorithms
 """
 import unittest
 import os
@@ -11,18 +11,6 @@ from h2o.exceptions import H2OError
 from onnx.defs import onnx_opset_version
 from onnxconverter_common.onnx_ex import DEFAULT_OPSET_NUMBER
 
-from h2o.estimators.deeplearning import H2ODeepLearningEstimator
-from h2o.estimators.gbm import H2OGradientBoostingEstimator
-from h2o.estimators.random_forest import H2ORandomForestEstimator
-from h2o.estimators.xgboost import H2OXGBoostEstimator
-from h2o.estimators.extended_isolation_forest import H2OExtendedIsolationForestEstimator
-from h2o.estimators.kmeans import H2OKMeansEstimator
-from h2o.estimators.naive_bayes import H2ONaiveBayesEstimator
-from h2o.estimators.pca import H2OPrincipalComponentAnalysisEstimator
-from h2o.estimators.psvm import H2OSupportVectorMachineEstimator
-from h2o.estimators.rulefit import H2ORuleFitEstimator
-from h2o.estimators.svd import H2OSingularValueDecompositionEstimator
-from h2o.estimators.targetencoder import H2OTargetEncoderEstimator
 from onnxmltools.convert import convert_h2o
 
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())

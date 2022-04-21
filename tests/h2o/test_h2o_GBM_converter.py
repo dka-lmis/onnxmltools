@@ -2,6 +2,7 @@
 
 """
 Tests H2O Gradient Boosting Machine (GBM) converter
+https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/gbm.html
 """
 import os
 import unittest
