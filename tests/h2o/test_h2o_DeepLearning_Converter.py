@@ -13,7 +13,6 @@ from onnx.defs import onnx_opset_version
 from onnxconverter_common import DEFAULT_OPSET_NUMBER
 
 from onnxmltools.utils import dump_data_and_model
-from h2o.estimators.random_forest import H2ORandomForestEstimator
 
 from tests.h2o.h2o_train_util import _convert_mojo, _train_and_get_model_path, H2OMojoWrapper
 
@@ -53,9 +52,9 @@ class H2OTestConverterNN(unittest.TestCase):
         if not os.path.exists(folder):
             os.makedirs(folder)
         mojo_path = model.download_mojo(path=folder)
-        with self.assertRaises(H2OError) as err:
+        with self.assertRaises(H2OError) as err_h2o:
             _convert_mojo(mojo_path)
-        self.assertRegex(err.exception.args[0], "Unable to print")
+        self.assertRegex(err_h2o.exception.args[0], "Unable to print")
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_NN_conversion(self):

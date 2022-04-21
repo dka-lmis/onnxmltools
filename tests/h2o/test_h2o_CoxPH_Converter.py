@@ -14,6 +14,7 @@ from h2o import h2o
 from h2o.estimators.coxph import H2OCoxProportionalHazardsEstimator
 
 from tests.h2o.h2o_train_util import _convert_mojo, _train_and_get_model_path, H2OMojoWrapper
+
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())
 
 
@@ -39,17 +40,17 @@ class H2OTestConverterCoxPH(unittest.TestCase):
     def tearDownClass(cls):
         h2o.cluster().shutdown()
 
-    @unittest.skip(reason='''H2O does not generates an empty file when downloading a CoxPH Model. The model generates 
-                          a correct zip-file with the data of the model though.''')
+    # @unittest.skip(reason='''H2O does not generate an empty file when downloading a CoxPH Model. The model generates
+    #                       a correct zip-file with the data of the model though.''')
     def test_h2o_CoxPH_algo_support(self):
         x, y, train, test = _get_CoxPH_dataset()
         model = H2OCoxProportionalHazardsEstimator(start_column="start",
                                                    stop_column="stop",
                                                    ties="breslow")
         mojo_path = _train_and_get_model_path(model, x, y, train, test)
-        with self.assertRaises(H2OError) as err:
+        with self.assertRaises(H2OError) as err_h2o:
             _convert_mojo(mojo_path)
-        self.assertRegex(err.exception.args[0], "Unable to print")
+        self.assertRegex(err_h2o.exception.args[0], "Unable to print")
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_CoxPH_conversion(self):

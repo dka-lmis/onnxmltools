@@ -7,6 +7,7 @@ import os
 import unittest
 
 from h2o import h2o
+from h2o.exceptions import H2OError
 from onnx.defs import onnx_opset_version
 from onnxconverter_common import DEFAULT_OPSET_NUMBER
 
@@ -44,9 +45,9 @@ class H2OTestConverterDRF(unittest.TestCase):
         x, y, train, test = _get_DRF_dataset()
         model = H2ORandomForestEstimator(ntrees=10, max_depth=5, min_rows=10, binomial_double_trees=True)
         mojo_path = _train_and_get_model_path(model, x, y, train, test)
-        with self.assertRaises(ValueError) as err:
+        with self.assertRaises(ValueError) as err_type:
             _convert_mojo(mojo_path)
-        self.assertRegex(err.exception.args[0], "not supported")
+        self.assertRegex(err_type.exception.args[0], "not supported")
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_DRF_conversion(self):
