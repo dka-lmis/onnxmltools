@@ -90,13 +90,11 @@ class H2OTestConverterGBM(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pass
-        # h2o.h2o.init(port=54440)
+        h2o.init(port=54440)
 
     @classmethod
     def tearDownClass(cls):
-        pass
-        # h2o.h2o.cluster().shutdown()
+        h2o.cluster().shutdown()
 
     def test_h2o_GBM_regressor(self):
         diabetes = load_diabetes()

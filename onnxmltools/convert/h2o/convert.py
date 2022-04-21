@@ -50,8 +50,9 @@ def convert(model, name=None, initial_types=None, doc_string='', target_opset=No
     if name is None:
         name = str(uuid4().hex)
     supported_algos = ['gbm']
-    # unsupported_alogs = ['coxph', 'dl', 'drf', 'gam', 'glm', 'glrm', 'isoforest', 'kmeans', 'pca', 'rulefit',
+    # unsupported_alogs = ['coxph', 'dl', 'drf', 'gam', 'glm', 'glrm', 'isolationforest', 'kmeans', 'pca', 'rulefit',
     #                      'stackedensamble', 'svm', 'word2vec', 'xgboost']
+    # next TODO: ['isolationforest', 'drf']
 
     if isinstance(model, str):
         model_path = model

@@ -14,7 +14,7 @@ from onnxconverter_common import DEFAULT_OPSET_NUMBER
 
 from onnxmltools.utils import dump_data_and_model
 
-from tests.h2o.h2o_train_util import _convert_mojo, _train_and_get_model_path, H2OMojoWrapper
+from tests.h2o.h2o_train_util import _convert_mojo, H2OMojoWrapper, _test_for_H2O_error
 
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())
 
@@ -70,10 +70,8 @@ class H2OTestConverterGAM(unittest.TestCase):
                                                 scale=[1, 1, 1],
                                                 num_knots=num_knots,
                                                 knot_ids=[knots1.key, knots2.key, knots3.key])
-        mojo_path = _train_and_get_model_path(model, x, y, train, test)
-        with self.assertRaises(H2OError) as err_h2o:
-            _convert_mojo(mojo_path)
-        self.assertRegex(err_h2o.exception.args[0], "Unable to print")
+        model = model.train(x=x, y=y, training_frame=train, validation_frame=test)
+        _test_for_H2O_error(self, model)
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_GAM_conversion(self):

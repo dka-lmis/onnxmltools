@@ -14,7 +14,7 @@ from onnxconverter_common import DEFAULT_OPSET_NUMBER
 
 from onnxmltools.utils import dump_data_and_model
 
-from tests.h2o.h2o_train_util import _convert_mojo, _train_and_get_model_path, H2OMojoWrapper
+from tests.h2o.h2o_train_util import _convert_mojo, H2OMojoWrapper, _test_for_H2O_error
 
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())
 
@@ -36,25 +36,17 @@ class H2OTestConverterGLM(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pass
-        # h2o.init(port=54440)
+        h2o.init(port=54440)
 
     @classmethod
     def tearDownClass(cls):
-        pass
-        # h2o.cluster().shutdown()
+        h2o.cluster().shutdown()
 
     def test_h2o_GLM_support(self):
         x, y, train = _get_GLM_dataset()
         model = H2OGeneralizedLinearEstimator(family="binomial", lambda_=0, compute_p_values=True)
         model.train(x=x, y=y, training_frame=train)
-        folder = os.environ.get('ONNXTESTDUMP', 'tests/temp')
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        mojo_path = model.download_mojo(path=folder)
-        with self.assertRaises(H2OError) as err_h2o:
-            _convert_mojo(mojo_path)
-        self.assertRegex(err_h2o.exception.args[0], "Unable to print")
+        _test_for_H2O_error(self, model)
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_GLM_conversion(self):

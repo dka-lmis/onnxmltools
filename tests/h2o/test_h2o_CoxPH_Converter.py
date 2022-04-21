@@ -13,7 +13,7 @@ from onnxmltools.utils import dump_data_and_model
 from h2o import h2o
 from h2o.estimators.coxph import H2OCoxProportionalHazardsEstimator
 
-from tests.h2o.h2o_train_util import _convert_mojo, _train_and_get_model_path, H2OMojoWrapper
+from tests.h2o.h2o_train_util import _convert_mojo, H2OMojoWrapper, _test_for_H2O_error
 
 TARGET_OPSET = min(DEFAULT_OPSET_NUMBER, onnx_opset_version())
 
@@ -47,10 +47,8 @@ class H2OTestConverterCoxPH(unittest.TestCase):
         model = H2OCoxProportionalHazardsEstimator(start_column="start",
                                                    stop_column="stop",
                                                    ties="breslow")
-        mojo_path = _train_and_get_model_path(model, x, y, train, test)
-        with self.assertRaises(H2OError) as err_h2o:
-            _convert_mojo(mojo_path)
-        self.assertRegex(err_h2o.exception.args[0], "Unable to print")
+        model = model.train(x=x, y=y, training_frame=train, validation_frame=test)
+        _test_for_H2O_error(self, model)
 
     @unittest.skip(reason='not yet implemented')
     def test_h2o_CoxPH_conversion(self):

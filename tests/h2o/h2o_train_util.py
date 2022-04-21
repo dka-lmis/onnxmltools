@@ -6,6 +6,7 @@ Tests h2o's tree-based methods' converters.
 import unittest
 import os
 import h2o
+from h2o.exceptions import H2OError
 
 from onnx.defs import onnx_opset_version
 from onnxconverter_common.onnx_ex import DEFAULT_OPSET_NUMBER
@@ -41,13 +42,24 @@ def _make_mojo(model, train, y=-1, force_y_numeric=False):
     return model.download_mojo(path=folder)
 
 
-def _train_and_get_model_path(model, x, y, train, valid):
-    model = model.train(x=x, y=y, training_frame=train, validation_frame=valid)
+def _test_for_H2O_error(test: unittest.TestCase, model):
     folder = os.environ.get('ONNXTESTDUMP', 'tests/temp')
     if not os.path.exists(folder):
         os.makedirs(folder)
     mojo_path = model.download_mojo(path=folder)
-    return mojo_path
+    with test.assertRaises(H2OError) as err_h2o:
+        _convert_mojo(mojo_path)
+    test.assertRegex(err_h2o.exception.args[0], "Unable to print")
+
+
+def _test_for_type_error(test: unittest.TestCase, model):
+    folder = os.environ.get('ONNXTESTDUMP', 'tests/temp')
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    mojo_path = model.download_mojo(path=folder)
+    with test.assertRaises(ValueError) as err_type:
+        _convert_mojo(mojo_path)
+    test.assertRegex(err_type.exception.args[0], "not supported")
 
 
 def _convert_mojo(mojo_path):
